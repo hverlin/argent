@@ -2,7 +2,6 @@ sudo: enabled
 
 env:
 - DOCKER_COMPOSE_VERSION=1.4.2
-- TERM=dumb
 
 language: generic
 
@@ -27,7 +26,7 @@ before_install:
 - docker-compose version
 
 install:
-- ./gradlew as --stacktrace --scan
+- TERM=dumb ./gradlew as --stacktrace --scan
 
 script:
-- ./gradlew check --stacktrace --scan
+- TERM=dumb ./gradlew check --stacktrace --scan
