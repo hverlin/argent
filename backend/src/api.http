@@ -1,0 +1,75 @@
+GET http://{{host-url}}/
+
+###
+
+GET http://{{host-url}}/health
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+        client.assert(response.body.status === "up", JSON.stringify(response.body));
+    });
+%}
+
+###
+
+GET http://{{host-url}}/admin
+
+###
+
+GET http://{{host-url}}/groups
+
+###
+
+POST http://{{host-url}}/groups/
+
+{ "name": "test_name" }
+
+###
+
+GET http://{{host-url}}/groups/test_name
+
+###
+
+GET http://{{host-url}}/groups/first group
+
+###
+
+POST http://{{host-url}}/groups/createExpense/
+
+{
+  "description": "test",
+  "groupName": "first group",
+  "createdBy": "c524b1dd-709f-47aa-93dd-f4c35cdf5ab3",
+  "amount": 30000
+}
+
+###
+
+POST http://admin:admin@localhost:8080/users/
+
+{
+  "name": "test",
+  "password": "test"
+}
+
+###
+
+POST http://{{host-url}}/login
+
+{
+  "name": "test",
+  "password": "test"
+}
+
+###
+
+GET http://{{host-url}}/me
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBdXRoZW50aWNhdGlvbiIsImlzcyI6IkFSR0VOVC5BUFAiLCJpZCI6ImM1ZWFiODEzLWMzOTAtNDJmNi04ZTczLWQwYmQxMGFiZGUyZCIsImV4cCI6MTUzNDg4OTE1MH0.TMnZCaFnh818PGZ_oMZ8-WsGQj72F1ksOJOedEFwG0pg1feSUfYTDSfIfLoJfXXeb--GbWKCc1N3EcpAjr6-zw
+
+###
+
+GET http://{{host-url}}/myGroups
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBdXRoZW50aWNhdGlvbiIsImlzcyI6IkFSR0VOVC5BUFAiLCJpZCI6IjdlZWY5YjMzLTFhYzYtNGQ2MC1iNmExLWYzMmIyYjNhMWYyNSIsImV4cCI6MTUzNDg5MDE2Mn0.I9IOfOyq3k_yHDFpHqhjOqrRaXpjIDr3J5kGBLd702ybkeJYDWXVWXfQmiA4axAQWOR548be6sX5JACw_L3WOg
+
+###

@@ -1,0 +1,43 @@
+plugins {
+  id 'com.avast.gradle.docker-compose' version "0.8.7"
+}
+
+allprojects {
+  group = 'org.pic.argent'
+  version = '1.0'
+}
+
+subprojects {
+  ext {
+    kotlin_version = '1.2.61'
+    ktor_version = '0.9.3'
+    logback_version = '1.2.1'
+    kotlinx_coroutines_version = '0.23.4'
+    exposed_version = '0.10.4'
+    h2_version = '1.4.196'
+    jackson_version = '2.9.2'
+  }
+
+  buildscript {
+    repositories {
+      jcenter()
+      mavenCentral()
+      maven { url 'https://plugins.gradle.org/m2/' }
+    }
+    dependencies {
+      classpath 'com.bmuschko:gradle-docker-plugin:3.6.1'
+    }
+  }
+
+  repositories {
+    jcenter()
+    mavenCentral()
+    maven { url 'https://kotlin.bintray.com/ktor' }
+    maven { url = "https://dl.bintray.com/kotlin/exposed" }
+    maven { url 'http://oss.sonatype.org/content/repositories/snapshots' }
+  }
+}
+
+composeUp.dependsOn(":backend:dockerBuildImage")
+composeUp.dependsOn(":webclient:createDockerImage")
+

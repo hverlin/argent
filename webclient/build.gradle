@@ -1,0 +1,65 @@
+import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
+
+plugins { id 'base' }
+plugins { id "com.moowork.node" version "1.2.0" }
+
+apply plugin: 'com.bmuschko.docker-remote-api'
+
+node {
+  version = '9.3.0'
+  npmVersion = '6.2.0'
+  download = true
+  workDir = file("${project.buildDir}/nodejs")
+  npmWorkDir = file("${project.buildDir}/npm")
+}
+
+task buildApp(type: NpmTask) {
+  inputs.files(fileTree('node_modules'))
+  inputs.files(fileTree('src'))
+  inputs.files(fileTree('tests/unit'))
+  inputs.file('package.json')
+  inputs.file('cypress.json')
+
+  outputs.dir('dist')
+
+  dependsOn(npmInstall)
+  args = ['run', 'build']
+}
+
+assemble.dependsOn(buildApp)
+
+task unitTests(type: NpmTask) {
+  args = ['run', 'test:unit']
+}
+
+task e2eTests(type: NpmTask) {
+  dependsOn(rootProject.composeUp)
+  args = ['run', 'test:e2eCi']
+}
+
+task testAll {
+  dependsOn(assemble)
+  dependsOn(unitTests)
+  dependsOn(e2eTests)
+}
+
+task copyDistDocker {
+  copy {
+    from '.'
+    into 'docker'
+    include 'dist/'
+  }
+}
+
+task createDockerImage(type: DockerBuildImage) {
+  dependsOn(assemble)
+  dependsOn(copyDistDocker)
+
+  tags = ['frontend']
+}
+
+check.dependsOn(testAll)
+
+clean.doFirst {
+  delete "${projectDir}/dist/"
+}

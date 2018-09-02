@@ -1,0 +1,44 @@
+image: hverlin/docker-jdk
+
+services:
+- docker:dind
+
+stages:
+- build
+- test
+
+# Disable the Gradle daemon to favour correctness
+variables:
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+
+before_script:
+- echo "Starting CI..."
+- apk add --no-cache py-pip
+- pip install docker-compose
+- docker info
+- docker-compose --version
+- export GRADLE_USER_HOME=`pwd`/.gradle
+
+build:
+  stage: build
+  script: ./gradlew --build-cache assemble
+  cache:
+    key: "$CI_COMMIT_REF_NAME"
+    policy: push
+    paths:
+    - build
+    - .gradle
+
+
+test:
+  stage: test
+  script: ./gradlew :webclient:e2eTests
+  cache:
+    key: "$CI_COMMIT_REF_NAME"
+    policy: pull
+    paths:
+    - build
+    - .gradle
+
+after_script:
+- echo "End CI"
