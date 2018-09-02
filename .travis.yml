@@ -8,14 +8,25 @@ language: generic
 services:
 - docker
 
+before_cache:
+- rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+- rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+
+cache:
+  directories:
+  - $HOME/.gradle/caches/
+  - $HOME/.gradle/wrapper/
+
 before_install:
 - sudo rm /usr/local/bin/docker-compose
 - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
 - chmod +x docker-compose
 - sudo mv docker-compose /usr/local/bin
+- docker version
+- docker-compose version
 
 install:
-- ./gradlew as
+- ./gradlew as --stacktrace --scan
 
 script:
-- ./gradlew check
+- ./gradlew check --stacktrace --scan
